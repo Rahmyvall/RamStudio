@@ -1,0 +1,232 @@
+{
+  "info": {
+    "name": "RAMStudio API v1",
+    "description": "REST API backend for the RAMStudio admin dashboard. Login first ({{base_url}}/api/v1/auth/login) and store the returned token in the {{token}} variable; every admin request then uses the Bearer {{token}} authorization header.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "id", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (get token)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@ramstudio.test\",\n  \"password\": \"password\",\n  \"device_name\": \"postman\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/auth/login", "host": ["{{base_url}}"], "path": ["api", "v1", "auth", "login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.token) { pm.collectionVariables.set('token', body.data.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/auth/me", "host": ["{{base_url}}"], "path": ["api", "v1", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/auth/logout", "host": ["{{base_url}}"], "path": ["api", "v1", "auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "List (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/services?per_page=10&search=&sort=id&order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "services"],
+              "query": [
+                { "key": "per_page", "value": "10" },
+                { "key": "search", "value": "" },
+                { "key": "sort", "value": "id" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/services/{{id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "services", "{{id}}"] }
+          }
+        },
+        {
+          "name": "Create (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Landing Page\",\n  \"short_description\": \"Landing page cepat.\",\n  \"starting_price\": 1500000,\n  \"is_featured\": true,\n  \"is_active\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/services", "host": ["{{base_url}}"], "path": ["api", "v1", "services"] }
+          }
+        },
+        {
+          "name": "Update (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Landing Page Updated\"\n}" },
+            "url": { "raw": "{{base_url}}/api/v1/services/{{id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "services", "{{id}}"] }
+          }
+        },
+        {
+          "name": "Delete (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/services/{{id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "services", "{{id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Categories",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/service-categories", "host": ["{{base_url}}"], "path": ["api", "v1", "service-categories"] } } },
+        { "name": "Create (admin)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Web Development\",\n  \"description\": \"Layanan web\"\n}" }, "url": { "raw": "{{base_url}}/api/v1/service-categories", "host": ["{{base_url}}"], "path": ["api", "v1", "service-categories"] } } }
+      ]
+    },
+    {
+      "name": "Portfolios",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/portfolios", "host": ["{{base_url}}"], "path": ["api", "v1", "portfolios"] } } },
+        { "name": "Detail", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/portfolios/{{id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "portfolios", "{{id}}"] } } },
+        { "name": "Create (admin)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Sistem Informasi\",\n  \"client_name\": \"PT Maju Jaya\",\n  \"technologies\": [1],\n  \"is_published\": true\n}" }, "url": { "raw": "{{base_url}}/api/v1/portfolios", "host": ["{{base_url}}"], "path": ["api", "v1", "portfolios"] } } }
+      ]
+    },
+    {
+      "name": "Pricing Packages",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/pricing-packages", "host": ["{{base_url}}"], "path": ["api", "v1", "pricing-packages"] } } }
+      ]
+    },
+    {
+      "name": "Testimonials",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/testimonials", "host": ["{{base_url}}"], "path": ["api", "v1", "testimonials"] } } }
+      ]
+    },
+    {
+      "name": "FAQs",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/faqs", "host": ["{{base_url}}"], "path": ["api", "v1", "faqs"] } } }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/posts", "host": ["{{base_url}}"], "path": ["api", "v1", "posts"] } } },
+        { "name": "Detail", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/posts/{{id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "posts", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "Pages",
+      "item": [
+        { "name": "List", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/pages", "host": ["{{base_url}}"], "path": ["api", "v1", "pages"] } } }
+      ]
+    },
+    {
+      "name": "Inquiries",
+      "item": [
+        {
+          "name": "Submit (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Calon Klien\",\n  \"email\": \"klien@example.com\",\n  \"message\": \"Saya ingin membuat website.\",\n  \"services\": [1]\n}" },
+            "url": { "raw": "{{base_url}}/api/v1/inquiries", "host": ["{{base_url}}"], "path": ["api", "v1", "inquiries"] }
+          }
+        },
+        {
+          "name": "List (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/inquiries?status=new", "host": ["{{base_url}}"], "path": ["api", "v1", "inquiries"], "query": [{ "key": "status", "value": "new" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        { "name": "List (admin)", "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/settings", "host": ["{{base_url}}"], "path": ["api", "v1", "settings"] } } }
+      ]
+    },
+    {
+      "name": "About",
+      "item": [
+        {
+          "name": "Profile (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/about/profile", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "profile"] }
+          }
+        },
+        {
+          "name": "Update Profile (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"company_name\": \"RAMStudio\",\n  \"tagline\": \"Creative Digital Studio\",\n  \"email\": \"hello@ramstudio.test\",\n  \"founded_year\": 2018\n}" },
+            "url": { "raw": "{{base_url}}/api/v1/about/profile", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "profile"] }
+          }
+        },
+        { "name": "Owners", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/owners", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "owners"] } } },
+        { "name": "Teams", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/teams", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "teams"] } } },
+        { "name": "Values", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/values", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "values"] } } },
+        { "name": "Journeys", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/journeys", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "journeys"] } } },
+        { "name": "Statistics", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/statistics", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "statistics"] } } },
+        { "name": "Social Links", "request": { "auth": { "type": "noauth" }, "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/about/social-links", "host": ["{{base_url}}"], "path": ["api", "v1", "about", "social-links"] } } }
+      ]
+    }
+  ]
+}
